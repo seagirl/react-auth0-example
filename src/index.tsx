@@ -11,6 +11,8 @@ ReactDOM.render(
       domain="s2factory.jp.auth0.com"
       clientId="GpuIc4wOBADBm997UzzL10XDcJYgzjA9"
       redirectUri={window.location.origin}
+      audience="https://s2factory.jp.auth0.com/api/v2/"
+      scope="read:current_user"
     >
       <App />
     </Auth0Provider>

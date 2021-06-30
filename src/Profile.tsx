@@ -7,20 +7,31 @@ const Profile = () => {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 
   const [accessToken, setAccessToken] = useState("");
+  const [responseBody, setResponseBody] = useState("");
 
   useEffect(() => {
     const getAccessToken = async () => {
-      const domain = "s2factory.jp.auth0.com";
-
       try {
         const accessToken = await getAccessTokenSilently({
-          audience: `https://${domain}/api/v2/`,
+          audience: `http://localhost:3001`,
           scope: "read:current_user",
         });
 
         console.log(`AccessToken: ${accessToken}`)
 
         setAccessToken(accessToken)
+
+        const response = await fetch('http://localhost:3001/api/authorized', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+
+        const responseBody = `${response.status}: ${await response.text()}`
+
+        console.log(`[API Response] ${responseBody}`)
+        setResponseBody(responseBody)
+
       } catch (e) {
         console.log(e.message);
         setAccessToken(e.message)
@@ -38,10 +49,12 @@ const Profile = () => {
   return (
       <div>
         <img src={user.picture} alt={user.name} />
-        <h2>{user.name}</h2>
+        <h2>{user.sub}</h2>
         <p>{user.email}</p>
         <h3>アクセストークン</h3>
         <p>{accessToken}</p>
+        <h3>API レスポンス</h3>
+        <p>{responseBody}</p>
         <Logout />
       </div>
     );
